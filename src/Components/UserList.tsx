@@ -11,9 +11,21 @@ import {
   Paper,
 } from "@material-ui/core";
 const useStyles = makeStyles({
+  container:{
+width:'100%',
+display:'flex',
+justifyContent:'center',
+border:'none'
+  },
   table: {
     minWidth: 650,
+    maxWidth:'90%',
+    border:'1px solid #C5C5C5 ',
+    borderRadius:'7px'
   },
+  tableHead:{
+    backgroundColor:'#C5C5C5'
+  }
 });
 
 interface Info {
@@ -37,9 +49,9 @@ export default function UserList({
   const classes = useStyles();
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer  className={classes.container}>
       <Table className={classes.table} aria-label="simple table">
-        <TableHead>
+        <TableHead className={classes.tableHead}>
           <TableRow>
             <TableCell>USER AVATAR</TableCell>
             <TableCell align="right">FIRST NAME</TableCell>

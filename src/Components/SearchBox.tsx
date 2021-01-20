@@ -1,12 +1,29 @@
 import React, { useState } from "react";
 import TextField, { TextFieldProps } from "@material-ui/core/TextField";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import { Grid } from "@material-ui/core";
+import { FaSearch } from "react-icons/fa";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    input: {
-        marginTop: "20px"
+    serchBox: {
+      width: "86%",
+      display: "flex",
     },
+    textField: {
+      width: "90%",
+    },
+    box: {
+      width: "5%",
+      marginLeft: "40px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+    },
+    icon:{
+      fontSize:'20px',
+    }
   })
 );
 
@@ -29,16 +46,21 @@ export default function SearchBox({ onchange }: OnChangeFunction) {
     onchange(target.value);
   }
   return (
-    <div className={classes.input}>
-      <label>search by first name...</label>
-      <TextField
-        
-        label="search"
-        variant="outlined"
-        id="mui-theme-provider-outlined-input"
-        value={value}
-        onChange={handleChange}
-      />
+    <div className={classes.serchBox}>
+      <Grid container spacing={1} alignItems="flex-end">
+        <Grid item className={classes.icon}>
+          <FaSearch />
+        </Grid>
+   
+          <TextField
+            className={classes.textField}
+            label="search"
+            // variant="outlined"
+            id="mui-theme-provider-outlined-input"
+            value={value}
+            onChange={handleChange}
+          />{" "}
+      </Grid>
     </div>
   );
 }

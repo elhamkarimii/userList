@@ -1,19 +1,32 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
-import AddUser from "../AddUser";
 import SearchBox from "../SearchBox";
 import SortBox from "../SortBox";
 import UserList from "../UserList";
 import Grid from "@material-ui/core/Grid";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { Box } from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      "& .MuiTextField-root": {
-        paddingTop: "20px"
-      },
+    searchPanel: {
+      padding: "10px 0px 50px 0",
+      display: "flex",
+      alignItems: "center",
+      boxSizing: "border-box",
+      justifyContent: "space-between",
     },
+    searchBox: {
+      display: "flex",
+      justifyContent: "center",
+      width:'70%',
+    },
+    sortBox:{
+      display:'flex',
+      justifyContent:'flex-start',
+      alignItems:'center',
+      width:'27%',
+      paddingTop:'10px'
+    }
   })
 );
 
@@ -43,20 +56,20 @@ export default function MainApp({
   const classes = useStyles();
   return (
     <div>
-      <Grid container xs={12} className={classes.root}>
-        <Grid item xs={6}>
+      <Grid container xs={12} className={classes.searchPanel}>
+        <Box className={classes.searchBox}>
           <SearchBox onchange={handleInputChange} />
-        </Grid>
-        <Grid item xs={6}>
+        </Box>
+        <Box className={classes.sortBox}>
           <SortBox onHandleSort={handleSort} />
-        </Grid>
+        </Box>
       </Grid>
-      <AddUser />
-      <UserList
+     {filteredData.length>0? <UserList
         data={filteredData}
         handleDeleteUser={handleDeleteUser}
         handleEditUser={handleEditUser}
-      />
+      />:'no found :('}
+
     </div>
   );
 }
