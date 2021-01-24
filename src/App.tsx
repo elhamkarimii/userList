@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useReducer, useMemo } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import MainApp from "./Components/Pages/MainApp";
-import EditUser from "./Components/Pages/EditUser";
-import UserForm from "./Components/Pages/UserForm";
-// import {GlobalFont} from './fonts/fonts'
+import MainApp from "./Components/Pages/MainApp/index";
+import EditUser from "./Components/Pages/EditUser/index";
+import UserForm from "./Components/Pages/UserForm/index";
+import { StateContext } from "./Components/Context";
+import useData from "./Components/useData"
+
 interface Info {
   id: number;
   email: string;
@@ -12,142 +14,91 @@ interface Info {
   last_name: string;
   avatar: string;
 }
-interface NewUserType {
-  first_name: string;
-  last_name: string;
-  email: string;
-}
 interface TargetType {
   val: string;
   name: string;
 }
-interface Event {
-  target: TargetType;
-}
 
 function App() {
-  const [data, setData] = useState<Info[]>([]);
-  const [searchedValue, setSearchedValue] = useState("");
-  const [value, setValue] = useState<Info>({
-    first_name: "",
-    last_name: "",
-    email: "",
-    id: 0,
-    avatar: "",
-  });
 
-  useEffect(() => {
-    fetch("https://reqres.in/api/users?page=1")
-      .then((res) => res.json())
-      .then((res) => setData(res.data));
-  }, []);
+  const { dispatch, value } = useData()
 
-  const filteredData = useMemo(() => {
-    const copyData = [...data];
-    const filteredData = copyData.filter((item: Info) =>
-      item["first_name"].toLowerCase().includes(searchedValue.toLowerCase())
-    );
-    return filteredData;
-  }, [searchedValue, data]);
+  // function handleSearchInput(value: string) {
+  //   dispatch({
+  //     type: "HANDLE_SEARCHED_VALUE",
+  //     payload: value,
+  //   });
+  // }
 
-  function handleInputChange(value: string) {
-    setSearchedValue(value);
-  }
+  // function handleSort(val: number) {
+  //   dispatch({
+  //     type: "HANDLE_SORT_DATA",
+  //     payload: val,
+  //   });
+  // }
 
-  function handleSort(val: number) {
-    const copyData = [...data];
-    const sortData = copyData.sort((a, b) => {
-      if (a["first_name"] < b["first_name"]) {
-        return -1 * val;
-      } else if (a["first_name"] > b["first_name"]) {
-        return 1 * val;
-      } else {
-        return 0;
-      }
-    });
-    setData(sortData);
-  }
-
-  function handleDeleteUser(id: number) {
-    const copyData = [...data];
-    const newData = copyData.filter((item) => item.id !== id);
-    setData(newData);
-  }
+  // function handleDeleteUser(id: number) {
+  //   dispatch({
+  //     type: "HANDLE_DELETE_USER",
+  //     payload: id,
+  //   });
+  // }
 
   function handleSaveUser(mode: string) {
-    const copyData = [...data];
-    if (mode === "add") {
-      const newItem = {
-        ...value,
-        id: data.length + 1,
-        avatar: "http://unsplash.it/221/221",
-      };
-      copyData.push(newItem);
-    } else {
-      const index = copyData.findIndex((item) => item.id === value.id);
-      copyData[index] = value;
-    }
-    setData(copyData);
-  }
-
-  function handelInputChange({ name, val }: TargetType) {
-    setValue({
-      ...value,
-      [name]: val,
+    dispatch({
+      type: "HANDLE_SAVE_USER",
+      payload: mode,
     });
   }
 
-  function handleEditUser(user: Info) {
-    setValue({
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      id: user.id,
-      avatar: user.avatar,
+  function handleInputChange({ name, val }: TargetType) {
+    dispatch({
+      type: "HANDLE_USER_INPUT",
+      payload: {
+        name: name,
+        val: val,
+      },
     });
   }
+
+  // function handleEditUser(user: Info) {
+  //   dispatch({
+  //     type: "HANDLE_EDIT_USER",
+  //     payload: user,
+  //   });
+  // }
 
   function handleBackButton() {
-    setValue({
-      first_name: "",
-      last_name: "",
-      email: "",
-      id: 0,
-      avatar: "",
-    })
+    dispatch({
+      type: "HANDLE_BACK_BUTTON",
+    });
   }
+
   return (
     <>
-    {/* <GlobalFont /> */}
-      <Router>
-        <Switch>
-          <Route path="/" exact>
-            <MainApp
-              handleInputChange={handleInputChange}
-              handleSort={handleSort}
-              filteredData={filteredData}
-              handleDeleteUser={handleDeleteUser}
-              handleEditUser={handleEditUser}
-            />
-          </Route>
-          <Route path="/addUser">
-            <UserForm
-              handleSaveUser={() => handleSaveUser("add")}
-              handelInputChange={handelInputChange}
-              handleBackButton={handleBackButton}
-              value={value}
-            />
-          </Route>
-          <Route path="/editUser">
-            <EditUser
-              value={value}
-              handelInputChange={handelInputChange}
-              handleSaveUser={() => handleSaveUser("edit")}
-              handleBackButton={handleBackButton}
-            />
-          </Route>
-        </Switch>
-      </Router>
+      <StateContext.Provider value={value}>
+        <Router>
+          <Switch>
+            <Route path="/" exact component={MainApp} >
+
+            </Route>
+            <Route path="/addUser" >
+              <UserForm
+                handleSaveUser={() => handleSaveUser("add")}
+                handleInputChange={handleInputChange}
+                handleBackButton={handleBackButton}
+              />
+            </Route>
+            <Route path="/editUser" >
+              <EditUser
+                handleInputChange={handleInputChange}
+                handleSaveUser={() => handleSaveUser("edit")}
+                handleBackButton={handleBackButton}
+              />
+            </Route>
+          </Switch>
+        </Router>
+      </StateContext.Provider>
     </>
   );
 }

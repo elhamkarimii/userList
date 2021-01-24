@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { TableCell } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import {useStyles} from "./style"
 
 interface Info {
   id: number;
@@ -22,6 +23,7 @@ export default function UserInfo({
   handleDeleteUser,
   handleEditUser,
 }: InfoType) {
+  const classes = useStyles()
   return (
     <>
       <TableCell component="th" scope="row">
@@ -37,7 +39,11 @@ export default function UserInfo({
       <TableCell align="right">{info.email}</TableCell>
       <TableCell align="right">
         <Link to="/editUser">
-          <Button variant="contained" onClick={handleEditUser}>
+          <Button
+            variant="contained"
+            onClick={handleEditUser}
+            className={classes.optionBtn}
+          >
             EDIT
           </Button>
         </Link>
@@ -45,6 +51,7 @@ export default function UserInfo({
           variant="contained"
           color="secondary"
           onClick={handleDeleteUser}
+          className={classes.optionBtn}
         >
           DELETE
         </Button>
